@@ -14,36 +14,75 @@
         <header class="header">
             <h1 class="title">PIXEL VAULT</h1>
             <div class="subtitle">GERENCIADOR DE DADOS RETRÔ</div>
+            <div class="header-user-info" id="header-user-info" style="display: none;">
+                <span id="username-display"></span>
+                <button id="user-menu-btn" class="pixel-button secondary">⚙️</button>
+            </div>
             <button id="theme-toggle" class="theme-toggle pixel-button secondary" title="Alternar Tema">☀</button>
         </header>
 
-        <!-- Login Screen -->
-        <div id="login-screen" class="screen active">
+        <!-- Account Login Screen -->
+        <div id="account-login-screen" class="screen active">
             <div class="login-container">
                 <div class="pixel-box">
-                    <h2>DIGITE A SENHA MESTRA</h2>
-                    <form id="login-form">
+                    <h2 id="auth-title">FAZER LOGIN</h2>
+                    
+                    <!-- Login Form -->
+                    <form id="account-login-form">
                         <div class="input-group">
-                            <label for="master-password">SENHA:</label>
-                            <input type="password" id="master-password" class="pixel-input" required>
+                            <label for="login-username">USUÁRIO/EMAIL:</label>
+                            <input type="text" id="login-username" class="pixel-input" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="login-password">SENHA:</label>
+                            <input type="password" id="login-password" class="pixel-input" required>
                         </div>
                         <button type="submit" class="pixel-button primary">ENTRAR</button>
                     </form>
-                    <div id="first-time-setup" class="hidden">
-                        <p>PRIMEIRA VEZ? CRIE SUA SENHA MESTRA:</p>
-                        <form id="setup-form">
-                            <div class="input-group">
-                                <label for="new-password">NOVA SENHA:</label>
-                                <input type="password" id="new-password" class="pixel-input" required>
-                            </div>
-                            <div class="input-group">
-                                <label for="confirm-password">CONFIRMAR:</label>
-                                <input type="password" id="confirm-password" class="pixel-input" required>
-                            </div>
-                            <button type="submit" class="pixel-button success">CRIAR COFRE</button>
-                        </form>
+                    
+                    <!-- Register Form -->
+                    <form id="account-register-form" class="hidden">
+                        <div class="input-group">
+                            <label for="register-username">USUÁRIO:</label>
+                            <input type="text" id="register-username" class="pixel-input" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-email">EMAIL:</label>
+                            <input type="email" id="register-email" class="pixel-input" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-password">SENHA:</label>
+                            <input type="password" id="register-password" class="pixel-input" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-master-password">SENHA MESTRA:</label>
+                            <input type="password" id="register-master-password" class="pixel-input" required>
+                        </div>
+                        <button type="submit" class="pixel-button success">CRIAR CONTA</button>
+                    </form>
+                    
+                    <div class="auth-switch">
+                        <button id="show-register" class="pixel-button secondary">CRIAR CONTA</button>
+                        <button id="show-login" class="pixel-button secondary hidden">JÁ TENHO CONTA</button>
                     </div>
-                    <button id="show-setup" class="pixel-button secondary">PRIMEIRO USO?</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Master Password Screen -->
+        <div id="master-password-screen" class="screen">
+            <div class="login-container">
+                <div class="pixel-box">
+                    <h2>DIGITE A SENHA MESTRA</h2>
+                    <p>Para acessar seu cofre seguro</p>
+                    <form id="master-password-form">
+                        <div class="input-group">
+                            <label for="master-password">SENHA MESTRA:</label>
+                            <input type="password" id="master-password" class="pixel-input" required>
+                        </div>
+                        <button type="submit" class="pixel-button primary">ACESSAR COFRE</button>
+                    </form>
+                    <button id="logout-btn" class="pixel-button secondary">SAIR DA CONTA</button>
                 </div>
             </div>
         </div>
@@ -207,7 +246,8 @@
     </div>
 
     <!-- External Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <script src="client/api.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
