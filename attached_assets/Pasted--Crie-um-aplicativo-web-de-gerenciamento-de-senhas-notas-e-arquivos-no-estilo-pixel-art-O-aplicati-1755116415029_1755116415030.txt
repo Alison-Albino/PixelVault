@@ -1,0 +1,41 @@
+"Crie um aplicativo web de gerenciamento de senhas, notas e arquivos no estilo pixel art. O aplicativo deve ter as seguintes funcionalidades e características:
+
+Tecnologias: Use HTML, CSS e JavaScript puro (sem frameworks como React ou Vue). O código deve ser bem estruturado e fácil de entender.
+
+Autenticação: Implemente a autenticação do lado do cliente. O usuário deve criar uma senha mestra na primeira visita. Esta senha será usada para criptografar e descriptografar todos os dados armazenados no localStorage do navegador. É crucial que a senha mestra nunca seja armazenada diretamente. Use uma biblioteca de criptografia leve, como a crypto-js, para garantir a segurança dos dados.
+
+Interface Visual: O design deve ser completamente no estilo pixel art.
+
+Fontes: Use uma fonte de estilo retrô, como a Press Start 2P.
+
+Elementos: Os botões, caixas de entrada e ícones devem ter bordas e preenchimento que simulem pixels. Use uma paleta de cores limitada e vibrante, característica de jogos antigos de 8 ou 16 bits.
+
+Fundo: O fundo pode ser um padrão de pixels ou uma imagem simples de pixel art.
+
+Funcionalidades Principais:
+
+Tela de Login: Uma tela inicial para inserir a senha mestra. Se for a primeira vez, deve pedir para criar uma.
+
+Tela Principal: Após o login, o usuário deve ver uma lista de suas entradas (senhas, notas e arquivos).
+
+Adicionar Entrada: O usuário deve ter a opção de adicionar três tipos de entradas:
+
+Senha: Formulário com campos para nome do serviço, nome de usuário, senha e URL.
+
+Nota: Campo de texto para o título e o conteúdo da nota.
+
+Arquivo: Um sistema de upload para arquivos, como imagens (JPG, PNG) e vídeos (MP4).
+
+Gerenciamento e Visualização de Dados:
+
+Visualizar/Editar/Deletar Entrada: Funcionalidades para ver os detalhes, editar ou remover qualquer entrada. Os dados devem ser descriptografados apenas ao serem visualizados.
+
+Visualizador de Mídia: Ao clicar em uma imagem ou vídeo, o aplicativo deve exibir o arquivo em um modal simples, mas que mantenha o estilo pixel art.
+
+Gerador de Senhas: Um botão que gere senhas fortes e aleatórias para o usuário.
+
+Instruções para o Código:
+
+Inclua comentários explicando as partes mais importantes, como a lógica de criptografia, a manipulação do DOM e como os arquivos são lidos e armazenados de forma segura (como Base64 ou URL de objeto) no localStorage.
+
+O arquivo index.html deve conter a estrutura básica. O style.css deve ter todos os estilos de pixel art. O script.js deve conter toda a lógica do aplicativo.
