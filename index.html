@@ -13,6 +13,7 @@
         <header class="header">
             <h1 class="title">PIXEL VAULT</h1>
             <div class="subtitle">RETRO DATA MANAGER</div>
+            <button id="theme-toggle" class="theme-toggle pixel-button secondary" title="Toggle Theme">☀</button>
         </header>
 
         <!-- Login Screen -->
@@ -55,6 +56,15 @@
                 <button id="logout" class="pixel-button danger">LOGOUT</button>
             </nav>
 
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-label">FILTER:</div>
+                <button id="filter-all" class="filter-button pixel-button active">ALL</button>
+                <button id="filter-password" class="filter-button pixel-button primary">PASSWORDS</button>
+                <button id="filter-note" class="filter-button pixel-button success">NOTES</button>
+                <button id="filter-file" class="filter-button pixel-button warning">FILES</button>
+            </div>
+
             <div class="content-area">
                 <div id="entries-list" class="entries-list">
                     <div class="empty-state">
@@ -80,6 +90,17 @@
                             <input type="text" id="service-name" class="pixel-input" required>
                         </div>
                         <div class="input-group">
+                            <label for="password-category">CATEGORY:</label>
+                            <select id="password-category" class="pixel-input">
+                                <option value="Social">Social</option>
+                                <option value="Work">Work</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
                             <label for="username">USERNAME:</label>
                             <input type="text" id="username" class="pixel-input" required>
                         </div>
@@ -87,6 +108,7 @@
                             <label for="password">PASSWORD:</label>
                             <div class="password-input-group">
                                 <input type="password" id="password" class="pixel-input" required>
+                                <button type="button" id="toggle-password" class="pixel-button secondary">👁</button>
                                 <button type="button" id="generate-password" class="pixel-button secondary">GEN</button>
                             </div>
                         </div>
@@ -104,6 +126,17 @@
                             <input type="text" id="note-title" class="pixel-input" required>
                         </div>
                         <div class="input-group">
+                            <label for="note-category">CATEGORY:</label>
+                            <select id="note-category" class="pixel-input">
+                                <option value="Personal">Personal</option>
+                                <option value="Work">Work</option>
+                                <option value="Ideas">Ideas</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
                             <label for="note-content">CONTENT:</label>
                             <textarea id="note-content" class="pixel-textarea" rows="6" required></textarea>
                         </div>
@@ -115,6 +148,17 @@
                         <div class="input-group">
                             <label for="file-title">TITLE:</label>
                             <input type="text" id="file-title" class="pixel-input" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="file-category">CATEGORY:</label>
+                            <select id="file-category" class="pixel-input">
+                                <option value="Photos">Photos</option>
+                                <option value="Documents">Documents</option>
+                                <option value="Videos">Videos</option>
+                                <option value="Work">Work</option>
+                                <option value="Personal">Personal</option>
+                                <option value="Other">Other</option>
+                            </select>
                         </div>
                         <div class="input-group">
                             <label for="file-input">FILE:</label>

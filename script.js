@@ -6,6 +6,8 @@ class PixelVault {
         this.masterPassword = null;
         this.entries = [];
         this.currentEditingId = null;
+        this.currentFilter = 'all';
+        this.currentTheme = localStorage.getItem('vault-theme') || 'dark';
         this.initializeApp();
     }
 
@@ -13,6 +15,21 @@ class PixelVault {
     initializeApp() {
         this.setupEventListeners();
         this.checkFirstTimeUser();
+        this.initializeTheme();
+    }
+
+    // Initialize theme
+    initializeTheme() {
+        document.body.setAttribute('data-theme', this.currentTheme);
+        this.updateThemeToggle();
+    }
+
+    // Update theme toggle button
+    updateThemeToggle() {
+        const toggle = document.getElementById('theme-toggle');
+        if (toggle) {
+            toggle.textContent = this.currentTheme === 'dark' ? '☀' : '🌙';
+        }
     }
 
     // Check if this is a first-time user
@@ -95,6 +112,30 @@ class PixelVault {
         // Password generator
         document.getElementById('generate-password').addEventListener('click', () => {
             this.generatePassword();
+        });
+
+        // Password visibility toggle
+        document.getElementById('toggle-password').addEventListener('click', () => {
+            this.togglePasswordVisibility('password');
+        });
+
+        // Theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            this.toggleTheme();
+        });
+
+        // Filter buttons
+        document.getElementById('filter-all').addEventListener('click', () => {
+            this.setFilter('all');
+        });
+        document.getElementById('filter-password').addEventListener('click', () => {
+            this.setFilter('password');
+        });
+        document.getElementById('filter-note').addEventListener('click', () => {
+            this.setFilter('note');
+        });
+        document.getElementById('filter-file').addEventListener('click', () => {
+            this.setFilter('file');
         });
 
         // File input preview
@@ -267,6 +308,75 @@ class PixelVault {
         this.resetForms();
     }
 
+    // Toggle theme
+    toggleTheme() {
+        this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', this.currentTheme);
+        localStorage.setItem('vault-theme', this.currentTheme);
+        this.updateThemeToggle();
+        this.showMessage(`Switched to ${this.currentTheme} theme`, 'info');
+    }
+
+    // Set filter
+    setFilter(filter) {
+        this.currentFilter = filter;
+        
+        // Update active filter button
+        document.querySelectorAll('.filter-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(`filter-${filter}`).classList.add('active');
+        
+        this.renderEntries();
+    }
+
+    // Toggle password visibility
+    togglePasswordVisibility(inputId) {
+        const input = document.getElementById(inputId);
+        const button = document.getElementById('toggle-password');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            button.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            button.textContent = '👁';
+        }
+    }
+
+    // Copy to clipboard
+    async copyToClipboard(text, label = 'Text') {
+        try {
+            await navigator.clipboard.writeText(text);
+            this.showMessage(`${label} copied to clipboard!`, 'success');
+        } catch (err) {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            this.showMessage(`${label} copied to clipboard!`, 'success');
+        }
+    }
+
+    // Download media file
+    downloadMedia(entry) {
+        try {
+            const link = document.createElement('a');
+            link.href = entry.fileData;
+            link.download = entry.fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            this.showMessage(`${entry.fileName} downloaded!`, 'success');
+        } catch (err) {
+            console.error('Download error:', err);
+            this.showMessage('Error downloading file!', 'error');
+        }
+    }
+
     // Save password entry
     savePasswordEntry() {
         const entry = {
@@ -276,6 +386,7 @@ class PixelVault {
             username: document.getElementById('username').value,
             password: document.getElementById('password').value,
             url: document.getElementById('url').value,
+            category: document.getElementById('password-category').value,
             createdAt: this.currentEditingId ? this.getEntryById(this.currentEditingId).createdAt : new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -291,6 +402,7 @@ class PixelVault {
             type: 'note',
             title: document.getElementById('note-title').value,
             content: document.getElementById('note-content').value,
+            category: document.getElementById('note-category').value,
             createdAt: this.currentEditingId ? this.getEntryById(this.currentEditingId).createdAt : new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -321,6 +433,7 @@ class PixelVault {
                 fileType: file.type,
                 fileSize: file.size,
                 fileData: base64Data,
+                category: document.getElementById('file-category').value,
                 createdAt: this.currentEditingId ? this.getEntryById(this.currentEditingId).createdAt : new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
@@ -435,27 +548,33 @@ class PixelVault {
     renderEntries() {
         const entriesList = document.getElementById('entries-list');
         
-        if (this.entries.length === 0) {
+        // Filter entries based on current filter
+        let filteredEntries = this.entries;
+        if (this.currentFilter !== 'all') {
+            filteredEntries = this.entries.filter(entry => entry.type === this.currentFilter);
+        }
+        
+        if (filteredEntries.length === 0) {
             entriesList.innerHTML = `
                 <div class="empty-state">
-                    <p>NO ENTRIES YET</p>
+                    <p>NO ENTRIES ${this.currentFilter !== 'all' ? 'IN THIS CATEGORY' : 'YET'}</p>
                     <p>USE THE BUTTONS ABOVE TO ADD DATA</p>
                 </div>
             `;
             return;
         }
 
-        entriesList.innerHTML = this.entries.map(entry => {
+        entriesList.innerHTML = filteredEntries.map(entry => {
             let preview = '';
             switch (entry.type) {
                 case 'password':
-                    preview = `Service: ${entry.serviceName}`;
+                    preview = `${entry.category || 'Other'} • ${entry.serviceName}`;
                     break;
                 case 'note':
-                    preview = entry.content.substring(0, 50) + (entry.content.length > 50 ? '...' : '');
+                    preview = `${entry.category || 'Other'} • ${entry.content.substring(0, 40)}${entry.content.length > 40 ? '...' : ''}`;
                     break;
                 case 'file':
-                    preview = `${entry.fileName} (${this.formatFileSize(entry.fileSize)})`;
+                    preview = `${entry.category || 'Other'} • ${entry.fileName} (${this.formatFileSize(entry.fileSize)})`;
                     break;
             }
 
@@ -500,23 +619,42 @@ class PixelVault {
         
         switch (entry.type) {
             case 'password':
+                const passwordId = `password-${id}`;
                 detailsHtml = `
                     <div class="entry-detail">
+                        <div class="entry-detail-label">CATEGORY:</div>
+                        <div class="entry-detail-value">${entry.category || 'Other'}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.category || 'Other'}', 'Category')">📋</button>
+                        </div>
+                    </div>
+                    <div class="entry-detail">
                         <div class="entry-detail-label">SERVICE:</div>
-                        <div class="entry-detail-value">${entry.serviceName}</div>
+                        <div class="entry-detail-value">${entry.serviceName}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.serviceName}', 'Service')">📋</button>
+                        </div>
                     </div>
                     <div class="entry-detail">
                         <div class="entry-detail-label">USERNAME:</div>
-                        <div class="entry-detail-value">${entry.username}</div>
+                        <div class="entry-detail-value">${entry.username}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.username}', 'Username')">📋</button>
+                        </div>
                     </div>
                     <div class="entry-detail">
                         <div class="entry-detail-label">PASSWORD:</div>
-                        <div class="entry-detail-value password">${entry.password}</div>
+                        <div class="entry-detail-value password">
+                            <span id="${passwordId}" class="password-text" style="display: none;">${entry.password}</span>
+                            <span id="${passwordId}-hidden" class="password-hidden">••••••••••••</span>
+                            <button class="password-visibility-toggle pixel-button secondary" onclick="app.togglePasswordInView('${passwordId}')">👁</button>
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.password}', 'Password')">📋</button>
+                        </div>
                     </div>
                     ${entry.url ? `
                         <div class="entry-detail">
                             <div class="entry-detail-label">URL:</div>
-                            <div class="entry-detail-value"><a href="${entry.url}" target="_blank" style="color: var(--primary-color)">${entry.url}</a></div>
+                            <div class="entry-detail-value">
+                                <a href="${entry.url}" target="_blank" style="color: var(--primary-color)">${entry.url}</a>
+                                <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.url}', 'URL')">📋</button>
+                            </div>
                         </div>
                     ` : ''}
                 `;
@@ -525,12 +663,22 @@ class PixelVault {
             case 'note':
                 detailsHtml = `
                     <div class="entry-detail">
+                        <div class="entry-detail-label">CATEGORY:</div>
+                        <div class="entry-detail-value">${entry.category || 'Other'}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.category || 'Other'}', 'Category')">📋</button>
+                        </div>
+                    </div>
+                    <div class="entry-detail">
                         <div class="entry-detail-label">TITLE:</div>
-                        <div class="entry-detail-value">${entry.title}</div>
+                        <div class="entry-detail-value">${entry.title}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.title}', 'Title')">📋</button>
+                        </div>
                     </div>
                     <div class="entry-detail">
                         <div class="entry-detail-label">CONTENT:</div>
-                        <div class="entry-detail-value">${entry.content}</div>
+                        <div class="entry-detail-value">${entry.content}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.content}', 'Content')">📋</button>
+                        </div>
                     </div>
                 `;
                 break;
@@ -541,12 +689,22 @@ class PixelVault {
                 
                 detailsHtml = `
                     <div class="entry-detail">
+                        <div class="entry-detail-label">CATEGORY:</div>
+                        <div class="entry-detail-value">${entry.category || 'Other'}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.category || 'Other'}', 'Category')">📋</button>
+                        </div>
+                    </div>
+                    <div class="entry-detail">
                         <div class="entry-detail-label">TITLE:</div>
-                        <div class="entry-detail-value">${entry.title}</div>
+                        <div class="entry-detail-value">${entry.title}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.title}', 'Title')">📋</button>
+                        </div>
                     </div>
                     <div class="entry-detail">
                         <div class="entry-detail-label">FILE NAME:</div>
-                        <div class="entry-detail-value">${entry.fileName}</div>
+                        <div class="entry-detail-value">${entry.fileName}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.fileName}', 'File Name')">📋</button>
+                        </div>
                     </div>
                     <div class="entry-detail">
                         <div class="entry-detail-label">FILE SIZE:</div>
@@ -556,14 +714,13 @@ class PixelVault {
                         <div class="entry-detail-label">FILE TYPE:</div>
                         <div class="entry-detail-value">${entry.fileType}</div>
                     </div>
-                    ${(isImage || isVideo) ? `
-                        <div class="entry-detail">
-                            <div class="entry-detail-label">PREVIEW:</div>
-                            <div class="entry-detail-value">
-                                <button class="pixel-button primary" onclick="app.showMediaViewer('${entry.id}')">VIEW MEDIA</button>
-                            </div>
+                    <div class="entry-detail">
+                        <div class="entry-detail-label">ACTIONS:</div>
+                        <div class="entry-detail-value">
+                            ${(isImage || isVideo) ? `<button class="pixel-button primary" onclick="app.showMediaViewer('${entry.id}')">VIEW MEDIA</button>` : ''}
+                            <button class="pixel-button warning" onclick="app.downloadMedia(app.getEntryById('${entry.id}'))">DOWNLOAD</button>
                         </div>
-                    ` : ''}
+                    </div>
                 `;
                 break;
         }
@@ -581,6 +738,23 @@ class PixelVault {
 
         modalBody.innerHTML = detailsHtml;
         document.getElementById('view-modal').classList.add('active');
+    }
+
+    // Toggle password visibility in view modal
+    togglePasswordInView(passwordId) {
+        const passwordText = document.getElementById(passwordId);
+        const passwordHidden = document.getElementById(passwordId + '-hidden');
+        const button = event.target;
+        
+        if (passwordText.style.display === 'none') {
+            passwordText.style.display = 'inline';
+            passwordHidden.style.display = 'none';
+            button.textContent = '🙈';
+        } else {
+            passwordText.style.display = 'none';
+            passwordHidden.style.display = 'inline';
+            button.textContent = '👁';
+        }
     }
 
     // Show media viewer
@@ -637,6 +811,7 @@ class PixelVault {
         switch (entry.type) {
             case 'password':
                 document.getElementById('service-name').value = entry.serviceName;
+                document.getElementById('password-category').value = entry.category || 'Other';
                 document.getElementById('username').value = entry.username;
                 document.getElementById('password').value = entry.password;
                 document.getElementById('url').value = entry.url || '';
@@ -644,11 +819,13 @@ class PixelVault {
 
             case 'note':
                 document.getElementById('note-title').value = entry.title;
+                document.getElementById('note-category').value = entry.category || 'Other';
                 document.getElementById('note-content').value = entry.content;
                 break;
 
             case 'file':
                 document.getElementById('file-title').value = entry.title;
+                document.getElementById('file-category').value = entry.category || 'Other';
                 // Note: We can't set file input value for security reasons
                 // Show current file info instead
                 const preview = document.getElementById('file-preview');
@@ -738,6 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: this.currentEditingId,
                 type: 'file',
                 title: document.getElementById('file-title').value,
+                category: document.getElementById('file-category').value,
                 fileName: existingEntry.fileName,
                 fileType: existingEntry.fileType,
                 fileSize: existingEntry.fileSize,
