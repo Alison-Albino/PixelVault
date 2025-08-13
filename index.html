@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelVault - Retro Password Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">PIXEL VAULT</h1>
+            <div class="subtitle">RETRO DATA MANAGER</div>
+        </header>
+
+        <!-- Login Screen -->
+        <div id="login-screen" class="screen active">
+            <div class="login-container">
+                <div class="pixel-box">
+                    <h2>ENTER MASTER PASSWORD</h2>
+                    <form id="login-form">
+                        <div class="input-group">
+                            <label for="master-password">PASSWORD:</label>
+                            <input type="password" id="master-password" class="pixel-input" required>
+                        </div>
+                        <button type="submit" class="pixel-button primary">LOGIN</button>
+                    </form>
+                    <div id="first-time-setup" class="hidden">
+                        <p>FIRST TIME? CREATE MASTER PASSWORD:</p>
+                        <form id="setup-form">
+                            <div class="input-group">
+                                <label for="new-password">NEW PASSWORD:</label>
+                                <input type="password" id="new-password" class="pixel-input" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="confirm-password">CONFIRM:</label>
+                                <input type="password" id="confirm-password" class="pixel-input" required>
+                            </div>
+                            <button type="submit" class="pixel-button success">CREATE VAULT</button>
+                        </form>
+                    </div>
+                    <button id="show-setup" class="pixel-button secondary">FIRST TIME USER?</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Screen -->
+        <div id="main-screen" class="screen">
+            <nav class="nav-bar">
+                <button id="add-password" class="pixel-button primary">+ PASSWORD</button>
+                <button id="add-note" class="pixel-button success">+ NOTE</button>
+                <button id="add-file" class="pixel-button warning">+ FILE</button>
+                <button id="logout" class="pixel-button danger">LOGOUT</button>
+            </nav>
+
+            <div class="content-area">
+                <div id="entries-list" class="entries-list">
+                    <div class="empty-state">
+                        <p>NO ENTRIES YET</p>
+                        <p>USE THE BUTTONS ABOVE TO ADD DATA</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Entry Modal -->
+        <div id="add-modal" class="modal">
+            <div class="modal-content pixel-box">
+                <div class="modal-header">
+                    <h3 id="modal-title">ADD ENTRY</h3>
+                    <button id="close-modal" class="pixel-button danger">X</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Password Form -->
+                    <form id="password-form" class="entry-form hidden">
+                        <div class="input-group">
+                            <label for="service-name">SERVICE:</label>
+                            <input type="text" id="service-name" class="pixel-input" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="username">USERNAME:</label>
+                            <input type="text" id="username" class="pixel-input" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="password">PASSWORD:</label>
+                            <div class="password-input-group">
+                                <input type="password" id="password" class="pixel-input" required>
+                                <button type="button" id="generate-password" class="pixel-button secondary">GEN</button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="url">URL:</label>
+                            <input type="url" id="url" class="pixel-input">
+                        </div>
+                        <button type="submit" class="pixel-button primary">SAVE PASSWORD</button>
+                    </form>
+
+                    <!-- Note Form -->
+                    <form id="note-form" class="entry-form hidden">
+                        <div class="input-group">
+                            <label for="note-title">TITLE:</label>
+                            <input type="text" id="note-title" class="pixel-input" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="note-content">CONTENT:</label>
+                            <textarea id="note-content" class="pixel-textarea" rows="6" required></textarea>
+                        </div>
+                        <button type="submit" class="pixel-button success">SAVE NOTE</button>
+                    </form>
+
+                    <!-- File Form -->
+                    <form id="file-form" class="entry-form hidden">
+                        <div class="input-group">
+                            <label for="file-title">TITLE:</label>
+                            <input type="text" id="file-title" class="pixel-input" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="file-input">FILE:</label>
+                            <input type="file" id="file-input" class="pixel-file-input" accept="image/*,video/*" required>
+                        </div>
+                        <div id="file-preview" class="file-preview hidden"></div>
+                        <button type="submit" class="pixel-button warning">SAVE FILE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Entry Modal -->
+        <div id="view-modal" class="modal">
+            <div class="modal-content pixel-box">
+                <div class="modal-header">
+                    <h3 id="view-modal-title">VIEW ENTRY</h3>
+                    <div class="modal-actions">
+                        <button id="edit-entry" class="pixel-button secondary">EDIT</button>
+                        <button id="delete-entry" class="pixel-button danger">DELETE</button>
+                        <button id="close-view-modal" class="pixel-button">X</button>
+                    </div>
+                </div>
+                <div class="modal-body" id="view-modal-body">
+                    <!-- Entry details will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Media Viewer Modal -->
+        <div id="media-modal" class="modal">
+            <div class="modal-content media-modal-content">
+                <div class="modal-header">
+                    <h3>MEDIA VIEWER</h3>
+                    <button id="close-media-modal" class="pixel-button danger">X</button>
+                </div>
+                <div class="modal-body media-body">
+                    <div id="media-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error/Success Messages -->
+        <div id="message-container" class="message-container"></div>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
