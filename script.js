@@ -29,6 +29,7 @@ class PixelVault {
         const toggle = document.getElementById('theme-toggle');
         if (toggle) {
             toggle.textContent = this.currentTheme === 'dark' ? '☀' : '🌙';
+            toggle.title = this.currentTheme === 'dark' ? 'Modo Claro' : 'Modo Escuro';
         }
     }
 
@@ -180,21 +181,21 @@ class PixelVault {
         const storedHash = localStorage.getItem('vault_master');
 
         if (!storedHash) {
-            this.showMessage('No master password set. Please use first time setup.', 'error');
+            this.showMessage('Nenhuma senha mestra definida. Use a configuração inicial.', 'error');
             return;
         }
 
         // Verify password by comparing hashes
         const passwordHash = CryptoJS.SHA256(password).toString();
         if (passwordHash !== storedHash) {
-            this.showMessage('Incorrect master password!', 'error');
+            this.showMessage('Senha mestra incorreta!', 'error');
             return;
         }
 
         this.masterPassword = password;
         await this.loadEntries();
         this.showMainScreen();
-        this.showMessage('Login successful!', 'success');
+        this.showMessage('Login realizado com sucesso!', 'success');
     }
 
     // Handle first-time setup
@@ -203,12 +204,12 @@ class PixelVault {
         const confirmPassword = document.getElementById('confirm-password').value;
 
         if (newPassword !== confirmPassword) {
-            this.showMessage('Passwords do not match!', 'error');
+            this.showMessage('As senhas não coincidem!', 'error');
             return;
         }
 
         if (newPassword.length < 6) {
-            this.showMessage('Password must be at least 6 characters!', 'error');
+            this.showMessage('A senha deve ter pelo menos 6 caracteres!', 'error');
             return;
         }
 
@@ -221,7 +222,7 @@ class PixelVault {
         this.saveEntries();
         
         this.showMainScreen();
-        this.showMessage('Vault created successfully!', 'success');
+        this.showMessage('Cofre criado com sucesso!', 'success');
     }
 
     // Show main screen after successful login
@@ -251,7 +252,7 @@ class PixelVault {
             this.entries = JSON.parse(decryptedData);
         } catch (error) {
             console.error('Error loading entries:', error);
-            this.showMessage('Error loading data. Password may be incorrect.', 'error');
+            this.showMessage('Erro ao carregar dados. A senha pode estar incorreta.', 'error');
             this.entries = [];
         }
     }
@@ -264,7 +265,7 @@ class PixelVault {
             localStorage.setItem('vault_entries', encrypted);
         } catch (error) {
             console.error('Error saving entries:', error);
-            this.showMessage('Error saving data!', 'error');
+            this.showMessage('Erro ao salvar dados!', 'error');
         }
     }
 
@@ -314,7 +315,7 @@ class PixelVault {
         document.body.setAttribute('data-theme', this.currentTheme);
         localStorage.setItem('vault-theme', this.currentTheme);
         this.updateThemeToggle();
-        this.showMessage(`Switched to ${this.currentTheme} theme`, 'info');
+        this.showMessage(`Tema ${this.currentTheme === 'dark' ? 'escuro' : 'claro'} ativado`, 'info');
     }
 
     // Set filter
@@ -345,10 +346,10 @@ class PixelVault {
     }
 
     // Copy to clipboard
-    async copyToClipboard(text, label = 'Text') {
+    async copyToClipboard(text, label = 'Texto') {
         try {
             await navigator.clipboard.writeText(text);
-            this.showMessage(`${label} copied to clipboard!`, 'success');
+            this.showMessage(`${label} copiado para a área de transferência!`, 'success');
         } catch (err) {
             // Fallback for older browsers
             const textArea = document.createElement('textarea');
@@ -357,7 +358,7 @@ class PixelVault {
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
-            this.showMessage(`${label} copied to clipboard!`, 'success');
+            this.showMessage(`${label} copiado para a área de transferência!`, 'success');
         }
     }
 
@@ -370,10 +371,10 @@ class PixelVault {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            this.showMessage(`${entry.fileName} downloaded!`, 'success');
+            this.showMessage(`${entry.fileName} baixado!`, 'success');
         } catch (err) {
             console.error('Download error:', err);
-            this.showMessage('Error downloading file!', 'error');
+            this.showMessage('Erro ao baixar arquivo!', 'error');
         }
     }
 
@@ -392,7 +393,7 @@ class PixelVault {
         };
 
         this.saveEntry(entry);
-        this.showMessage(`Password ${this.currentEditingId ? 'updated' : 'saved'} successfully!`, 'success');
+        this.showMessage(`Senha ${this.currentEditingId ? 'atualizada' : 'salva'} com sucesso!`, 'success');
     }
 
     // Save note entry
@@ -408,7 +409,7 @@ class PixelVault {
         };
 
         this.saveEntry(entry);
-        this.showMessage(`Note ${this.currentEditingId ? 'updated' : 'saved'} successfully!`, 'success');
+        this.showMessage(`Nota ${this.currentEditingId ? 'atualizada' : 'salva'} com sucesso!`, 'success');
     }
 
     // Save file entry
@@ -417,7 +418,7 @@ class PixelVault {
         const file = fileInput.files[0];
         
         if (!file) {
-            this.showMessage('Please select a file!', 'error');
+            this.showMessage('Por favor, selecione um arquivo!', 'error');
             return;
         }
 
@@ -439,10 +440,10 @@ class PixelVault {
             };
 
             this.saveEntry(entry);
-            this.showMessage(`File ${this.currentEditingId ? 'updated' : 'saved'} successfully!`, 'success');
+            this.showMessage(`Arquivo ${this.currentEditingId ? 'atualizado' : 'salvo'} com sucesso!`, 'success');
         } catch (error) {
             console.error('Error saving file:', error);
-            this.showMessage('Error saving file!', 'error');
+            this.showMessage('Erro ao salvar arquivo!', 'error');
         }
     }
 
@@ -496,7 +497,7 @@ class PixelVault {
         }
         
         document.getElementById('password').value = password;
-        this.showMessage('Strong password generated!', 'info');
+        this.showMessage('Senha forte gerada!', 'info');
     }
 
     // Preview uploaded file
@@ -557,8 +558,8 @@ class PixelVault {
         if (filteredEntries.length === 0) {
             entriesList.innerHTML = `
                 <div class="empty-state">
-                    <p>NO ENTRIES ${this.currentFilter !== 'all' ? 'IN THIS CATEGORY' : 'YET'}</p>
-                    <p>USE THE BUTTONS ABOVE TO ADD DATA</p>
+                    <p>${this.currentFilter !== 'all' ? 'NENHUMA ENTRADA NESTA CATEGORIA' : 'NENHUMA ENTRADA AINDA'}</p>
+                    <p>USE OS BOTÕES ACIMA PARA ADICIONAR DADOS</p>
                 </div>
             `;
             return;
@@ -613,7 +614,12 @@ class PixelVault {
         const modalBody = document.getElementById('view-modal-body');
         const modalTitle = document.getElementById('view-modal-title');
 
-        modalTitle.textContent = `VIEW ${entry.type.toUpperCase()}`;
+        const typeTranslations = {
+            password: 'SENHA',
+            note: 'NOTA',
+            file: 'ARQUIVO'
+        };
+        modalTitle.textContent = `VER ${typeTranslations[entry.type] || entry.type.toUpperCase()}`;
 
         let detailsHtml = '';
         
@@ -622,30 +628,30 @@ class PixelVault {
                 const passwordId = `password-${id}`;
                 detailsHtml = `
                     <div class="entry-detail">
-                        <div class="entry-detail-label">CATEGORY:</div>
-                        <div class="entry-detail-value">${entry.category || 'Other'}
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.category || 'Other'}', 'Category')">📋</button>
+                        <div class="entry-detail-label">CATEGORIA:</div>
+                        <div class="entry-detail-value">${entry.category || 'Outro'}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.category || 'Outro'}', 'Categoria')">📋</button>
                         </div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">SERVICE:</div>
+                        <div class="entry-detail-label">SERVIÇO:</div>
                         <div class="entry-detail-value">${entry.serviceName}
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.serviceName}', 'Service')">📋</button>
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.serviceName}', 'Serviço')">📋</button>
                         </div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">USERNAME:</div>
+                        <div class="entry-detail-label">USUÁRIO:</div>
                         <div class="entry-detail-value">${entry.username}
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.username}', 'Username')">📋</button>
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.username}', 'Usuário')">📋</button>
                         </div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">PASSWORD:</div>
+                        <div class="entry-detail-label">SENHA:</div>
                         <div class="entry-detail-value password">
                             <span id="${passwordId}" class="password-text" style="display: none;">${entry.password}</span>
                             <span id="${passwordId}-hidden" class="password-hidden">••••••••••••</span>
                             <button class="password-visibility-toggle pixel-button secondary" onclick="app.togglePasswordInView('${passwordId}')">👁</button>
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.password}', 'Password')">📋</button>
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.password}', 'Senha')">📋</button>
                         </div>
                     </div>
                     ${entry.url ? `
@@ -663,21 +669,21 @@ class PixelVault {
             case 'note':
                 detailsHtml = `
                     <div class="entry-detail">
-                        <div class="entry-detail-label">CATEGORY:</div>
-                        <div class="entry-detail-value">${entry.category || 'Other'}
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.category || 'Other'}', 'Category')">📋</button>
+                        <div class="entry-detail-label">CATEGORIA:</div>
+                        <div class="entry-detail-value">${entry.category || 'Outro'}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.category || 'Outro'}', 'Categoria')">📋</button>
                         </div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">TITLE:</div>
+                        <div class="entry-detail-label">TÍTULO:</div>
                         <div class="entry-detail-value">${entry.title}
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.title}', 'Title')">📋</button>
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.title}', 'Título')">📋</button>
                         </div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">CONTENT:</div>
+                        <div class="entry-detail-label">CONTEÚDO:</div>
                         <div class="entry-detail-value">${entry.content}
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.content}', 'Content')">📋</button>
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.content}', 'Conteúdo')">📋</button>
                         </div>
                     </div>
                 `;
@@ -689,36 +695,36 @@ class PixelVault {
                 
                 detailsHtml = `
                     <div class="entry-detail">
-                        <div class="entry-detail-label">CATEGORY:</div>
-                        <div class="entry-detail-value">${entry.category || 'Other'}
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.category || 'Other'}', 'Category')">📋</button>
+                        <div class="entry-detail-label">CATEGORIA:</div>
+                        <div class="entry-detail-value">${entry.category || 'Outro'}
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.category || 'Outro'}', 'Categoria')">📋</button>
                         </div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">TITLE:</div>
+                        <div class="entry-detail-label">TÍTULO:</div>
                         <div class="entry-detail-value">${entry.title}
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.title}', 'Title')">📋</button>
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.title}', 'Título')">📋</button>
                         </div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">FILE NAME:</div>
+                        <div class="entry-detail-label">NOME DO ARQUIVO:</div>
                         <div class="entry-detail-value">${entry.fileName}
-                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.fileName}', 'File Name')">📋</button>
+                            <button class="copy-button pixel-button secondary" onclick="app.copyToClipboard('${entry.fileName}', 'Nome do Arquivo')">📋</button>
                         </div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">FILE SIZE:</div>
+                        <div class="entry-detail-label">TAMANHO:</div>
                         <div class="entry-detail-value">${this.formatFileSize(entry.fileSize)}</div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">FILE TYPE:</div>
+                        <div class="entry-detail-label">TIPO:</div>
                         <div class="entry-detail-value">${entry.fileType}</div>
                     </div>
                     <div class="entry-detail">
-                        <div class="entry-detail-label">ACTIONS:</div>
+                        <div class="entry-detail-label">AÇÕES:</div>
                         <div class="entry-detail-value">
-                            ${(isImage || isVideo) ? `<button class="pixel-button primary" onclick="app.showMediaViewer('${entry.id}')">VIEW MEDIA</button>` : ''}
-                            <button class="pixel-button warning" onclick="app.downloadMedia(app.getEntryById('${entry.id}'))">DOWNLOAD</button>
+                            ${(isImage || isVideo) ? `<button class="pixel-button primary" onclick="app.showMediaViewer('${entry.id}')">VER MÍDIA</button>` : ''}
+                            <button class="pixel-button warning" onclick="app.downloadMedia(app.getEntryById('${entry.id}'))">BAIXAR</button>
                         </div>
                     </div>
                 `;
@@ -727,11 +733,11 @@ class PixelVault {
 
         detailsHtml += `
             <div class="entry-detail">
-                <div class="entry-detail-label">CREATED:</div>
+                <div class="entry-detail-label">CRIADO:</div>
                 <div class="entry-detail-value">${new Date(entry.createdAt).toLocaleString()}</div>
             </div>
             <div class="entry-detail">
-                <div class="entry-detail-label">UPDATED:</div>
+                <div class="entry-detail-label">ATUALIZADO:</div>
                 <div class="entry-detail-value">${new Date(entry.updatedAt).toLocaleString()}</div>
             </div>
         `;
@@ -801,9 +807,9 @@ class PixelVault {
 
         // Update modal title
         const titles = {
-            password: 'EDIT PASSWORD',
-            note: 'EDIT NOTE',
-            file: 'EDIT FILE'
+            password: 'EDITAR SENHA',
+            note: 'EDITAR NOTA',
+            file: 'EDITAR ARQUIVO'
         };
         document.getElementById('modal-title').textContent = titles[entry.type];
 
@@ -830,9 +836,9 @@ class PixelVault {
                 // Show current file info instead
                 const preview = document.getElementById('file-preview');
                 preview.innerHTML = `
-                    <div>Current file: ${entry.fileName} (${this.formatFileSize(entry.fileSize)})</div>
+                    <div>Arquivo atual: ${entry.fileName} (${this.formatFileSize(entry.fileSize)})</div>
                     <div style="font-size: 8px; color: var(--secondary-color); margin-top: 5px;">
-                        Select a new file to replace, or leave empty to keep current file
+                        Selecione um novo arquivo para substituir, ou deixe vazio para manter o arquivo atual
                     </div>
                 `;
                 preview.classList.remove('hidden');
@@ -844,7 +850,7 @@ class PixelVault {
 
     // Delete current entry
     deleteCurrentEntry() {
-        if (!confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
+        if (!confirm('Tem certeza que deseja excluir esta entrada? Esta ação não pode ser desfeita.')) {
             return;
         }
 
@@ -854,7 +860,7 @@ class PixelVault {
             this.saveEntries();
             this.renderEntries();
             this.hideModal('view-modal');
-            this.showMessage('Entry deleted successfully!', 'success');
+            this.showMessage('Entrada excluída com sucesso!', 'success');
         }
     }
 
@@ -877,7 +883,7 @@ class PixelVault {
 
     // Logout user
     logout() {
-        if (confirm('Are you sure you want to logout?')) {
+        if (confirm('Tem certeza que deseja sair?')) {
             this.masterPassword = null;
             this.entries = [];
             this.currentEditingId = null;
@@ -890,7 +896,7 @@ class PixelVault {
             document.getElementById('master-password').value = '';
             this.resetForms();
             
-            this.showMessage('Logged out successfully!', 'info');
+            this.showMessage('Logout realizado com sucesso!', 'info');
         }
     }
 }

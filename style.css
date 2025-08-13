@@ -568,16 +568,141 @@ body {
     }
     
     .title {
-        font-size: 18px;
+        font-size: 16px;
+    }
+    
+    .subtitle {
+        font-size: 8px;
+    }
+    
+    .theme-toggle {
+        top: 10px;
+        right: 10px;
+        padding: 6px 10px;
+        font-size: 12px;
     }
     
     .entries-list {
         grid-template-columns: 1fr;
+        gap: 15px;
     }
     
     .nav-bar {
         flex-direction: column;
-        align-items: center;
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .nav-bar .pixel-button {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .filter-bar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .filter-label {
+        margin-bottom: 5px;
+    }
+    
+    .filter-button {
+        margin: 2px;
+        padding: 8px 16px;
+        font-size: 9px;
+        flex: 1;
+        min-width: 80px;
+    }
+    
+    .pixel-button {
+        font-size: 9px;
+        padding: 10px 15px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+        max-height: 85vh;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .modal-actions .pixel-button {
+        width: 100%;
+    }
+    
+    .password-input-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .password-input-group .pixel-button {
+        width: 100%;
+    }
+    
+    .copy-button {
+        font-size: 10px;
+        padding: 6px 10px;
+        margin-left: 8px;
+        margin-top: 5px;
+        display: inline-block;
+    }
+    
+    .entry-detail-value {
+        word-break: break-word;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .entry-card {
+        padding: 12px;
+    }
+    
+    .entry-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 8px;
+    }
+    
+    .pixel-box {
+        padding: 12px;
+    }
+    
+    .header {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .title {
+        font-size: 14px;
+    }
+    
+    .subtitle {
+        font-size: 7px;
+    }
+    
+    .theme-toggle {
+        top: 8px;
+        right: 8px;
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+    
+    .pixel-input, .pixel-textarea {
+        font-size: 9px;
+        padding: 10px;
     }
     
     .pixel-button {
@@ -585,26 +710,39 @@ body {
         padding: 8px 12px;
     }
     
-    .modal-content {
-        width: 95%;
-        margin: 10px;
-    }
-    
-    .modal-actions {
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
+    .filter-bar {
         padding: 10px;
     }
     
-    .pixel-box {
-        padding: 15px;
+    .filter-button {
+        padding: 6px 12px;
+        font-size: 8px;
+        min-width: 70px;
     }
     
-    .password-input-group {
-        flex-direction: column;
+    .nav-bar {
+        padding: 8px;
+    }
+    
+    .modal-header h3 {
+        font-size: 12px;
+    }
+    
+    .entry-detail-label {
+        font-size: 7px;
+    }
+    
+    .entry-detail-value {
+        font-size: 9px;
+    }
+    
+    .copy-button {
+        font-size: 8px;
+        padding: 4px 8px;
+    }
+    
+    .message {
+        font-size: 7px;
+        padding: 8px 12px;
     }
 }
